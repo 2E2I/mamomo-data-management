@@ -1,4 +1,3 @@
-from email.quoprimime import body_check
 from lib2to3.pgen2 import driver
 from selenium import webdriver
 import requests
@@ -12,61 +11,9 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 import time
 import json
+from campaign import *
 
 _URL_DONATE_LIST = "https://happybean.naver.com/donation/DonateHomeMain"
-
-# 카테고리
-# category_dic = {
-#     3 : "children",
-#     4 : "elder",
-#     5 : "impairment",
-#     6 : "multiculture",
-#     7 : "abroad",
-#     8 : "family-woman",
-#     9 : "citizen",
-#     10 : "animal",
-#     11 : "environment",
-#     12 : "etc"
-# }
-
-# CATEGORY_CHILDREN = 3 # 아동·청소년
-# CATEGORY_ELDER = 4 # 어르신
-# CATEGORY_IMPAIRMENT = 5 # 장애인
-# CATEGORY_MULTICULTURE = 6 # 다문화
-# CATEGORY_ABROAD = 7 # 지구촌
-# CATEGORY_FAMILY_WOMAN = 8 # 가족·여성
-# CATEGORY_CITIZEN = 9 # 시민사회
-# CATEGORY_ANIMAL = 10 # 동물
-# CATEGORY_ENVIRONMENT = 11 # 환경
-# CATEGORY_ETC = 12 # 기타
-
-
-class Campaign:
-    def __init__(
-        self,
-        campaign_id,
-        title,
-        category,
-        theme,
-        body,
-        organization_name,
-        thumbnail,
-        due_date,
-        start_date,
-        target_price,
-        status_price,
-    ):
-        self.campaign_id = campaign_id
-        self.title = title
-        self.category = category
-        self.theme = theme
-        self.body = body
-        self.organization_name = organization_name
-        self.thumbnail = thumbnail
-        self.due_date = due_date
-        self.start_date = start_date
-        self.target_price = target_price
-        self.status_price = status_price
 
 def get_title(soup: BeautifulSoup):
     return soup.find("h3", "tit").text
@@ -114,7 +61,7 @@ def get_prices(soup: BeautifulSoup):
 def crawling_each_campaign(url: str, src: str):
     response = requests.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
-
+    print(url)
     campaign_id = url.split("/")[4]
     title = get_title(soup)
     theme, category = get_theme_and_category(soup)
@@ -126,6 +73,7 @@ def crawling_each_campaign(url: str, src: str):
 
     campaign = Campaign(
         campaign_id,
+        url,
         title,
         category,
         theme,
@@ -138,6 +86,7 @@ def crawling_each_campaign(url: str, src: str):
         status_price,
     )
     data.append(campaign.__dict__)
+
 
 def set_chrome_driver():
     options = webdriver.ChromeOptions()
@@ -158,24 +107,20 @@ def set_chrome_driver():
 if __name__ == "__main__":
 
     print("... 해피빈 크롤링 시작 ...")
-    start = time.time() # 시작시간
-    
+    start = time.time()  # 시작시간
+
     data = []
 
     driver = set_chrome_driver()
     driver.get(_URL_DONATE_LIST)
 
     # 더보기 버튼 끝까지 클릭
-    while True:
-        btn_more = driver.find_element(By.CSS_SELECTOR, "#btn_more")
-        if btn_more:
-            try:
-                WebDriverWait(driver, 1).until(
-                    EC.element_to_be_clickable((By.CSS_SELECTOR, "#btn_more"))
-                ).click()
-            except TimeoutException:
-                break
-        else:
+    while driver.find_element(By.CSS_SELECTOR, "#btn_more").is_displayed:
+        try:
+            WebDriverWait(driver, 1).until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, "#btn_more"))
+            ).click()
+        except TimeoutException:
             break
 
     # 각 캠페인 카드에 대한 크롤링 진행
@@ -187,12 +132,12 @@ if __name__ == "__main__":
         ).get_attribute("src")
         crawling_each_campaign(campaign_url, campaign_thumbnail)
     driver.close()
-    
-    end = time.time() # 종료 시간
+
+    end = time.time()  # 종료 시간
     print(f"{end - start:.5f} sec")
-    
+
     print("... 해피빈 크롤링 끝 ...")
-    
+
     # json 으로 저장
-    with open('data\happybean.json', "w", encoding = 'utf-8') as f:
-        json.dump(data, f, ensure_ascii = False, indent = 4)
+    with open("data\happybean.json", "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
