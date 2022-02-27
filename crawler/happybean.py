@@ -57,11 +57,12 @@ def get_prices(soup: BeautifulSoup):
     ).text.replace(",", "")
     return status_price, target_price
 
+def get_percent(soup: BeautifulSoup):
+    return soup.select_one("#container > div > div.collect_side > div.section_status > div.graph_wrap > div.graph_status > span > strong").text
 
 def crawling_each_campaign(url: str, src: str):
     response = requests.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
-    print(url)
     campaign_id = url.split("/")[4]
     title = get_title(soup)
     theme, category = get_theme_and_category(soup)
@@ -70,6 +71,7 @@ def crawling_each_campaign(url: str, src: str):
     thumbnail = src
     start_date, due_date = get_dates(soup)
     status_price, target_price = get_prices(soup)
+    percent = get_percent(soup)
 
     campaign = Campaign(
         campaign_id,
@@ -84,6 +86,7 @@ def crawling_each_campaign(url: str, src: str):
         start_date,
         target_price,
         status_price,
+        percent
     )
     data.append(campaign.__dict__)
 
