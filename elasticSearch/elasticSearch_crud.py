@@ -1,7 +1,7 @@
 from elasticsearch import helpers,Elasticsearch
 import json
 
-sites = ['happybean']
+sites = ['happybean', 'kakao']
     
 def insertData():
     for site in sites:
