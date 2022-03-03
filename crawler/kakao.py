@@ -6,7 +6,10 @@ import time
 import json
 from campaign import *
 
+
 _URL_DONATE_LIST = "https://together.kakao.com/fundraisings/now?sort=1"
+_SITE_NAME = "kakao"
+_CAMPAIGNS = "campaigns"
 
 
 def set_chrome_driver():
@@ -59,7 +62,7 @@ def get_theme():
 
 
 def get_body():
-    return driver.page_source
+    return driver.find_element(By.TAG_NAME, "fundraising-content").text.replace('\n',' ')
 
 
 def get_organization_name():
@@ -86,6 +89,15 @@ def get_prices():
 
 def get_percent():
     return driver.find_element(By.CLASS_NAME, "txt_result").text
+
+
+def set_campaign_data_with_index(campaign):
+    index = dict()
+    index["_index"] = _CAMPAIGNS
+    index["_type"] = _SITE_NAME
+    index["_id"] = campaign.campaign_id
+    index["_source"] = campaign.__dict__     # 딕셔너리 형태로 저장
+    return index
 
 
 def crawling_each_campaign():
@@ -118,8 +130,12 @@ def crawling_each_campaign():
         target_price,
         status_price,
         percent)
-    data.append(campaign.__dict__)  # 딕셔너리 형태로 저장
 
+    campaign_data = set_campaign_data_with_index(campaign)
+
+    data.append(campaign_data)
+
+    # print(data)
 
 if __name__ == '__main__':
 
@@ -162,5 +178,5 @@ if __name__ == '__main__':
     print("... 카카오같이가치 크롤링 끝 ...")
 
     # json 으로 저장
-    with open('..\data\kakao.json', 'w', encoding='utf-8') as f:
+    with open('.\data\kakao.json', 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
