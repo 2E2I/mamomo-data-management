@@ -4,6 +4,7 @@ class Campaign:
     def __init__(
             self,
             campaign_id,
+            site_type,
             url,
             title,
             tags,
@@ -17,6 +18,7 @@ class Campaign:
             percent,
     ):
         self.campaign_id = campaign_id
+        self.site_type = site_type
         self.url = url
         self.title = title
         self.tags = tags
