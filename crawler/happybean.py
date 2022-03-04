@@ -14,8 +14,9 @@ import json
 from campaign import *
 
 _URL_DONATE_LIST = "https://happybean.naver.com/donation/DonateHomeMain"
-_SITE_NAME = "happybean"
-_CAMPAIGNS = "campaigns"
+_DONATE_SITE = "happybean"
+_ES_INDEX = "campaigns"
+_ES_TYPE = "card"
 
 def set_chrome_driver():
     options = webdriver.ChromeOptions()
@@ -84,8 +85,8 @@ def get_percent(soup: BeautifulSoup):
 
 def set_campaign_data_with_index(campaign):
     index = dict()
-    index["_index"] = _CAMPAIGNS
-    index["_type"] = _SITE_NAME
+    index["_index"] = _ES_INDEX
+    index["_type"] = _ES_TYPE
     index["_id"] = campaign.campaign_id
     index["_source"] = campaign.__dict__     # 딕셔너리 형태로 저장
     return index
@@ -94,6 +95,7 @@ def crawling_each_campaign(url: str, src: str):
     response = requests.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
     campaign_id = url.split("/")[4]
+    site_type = _DONATE_SITE
     title = get_title(soup)
     tags = get_tags(soup)
     body = get_body(soup)
@@ -105,6 +107,7 @@ def crawling_each_campaign(url: str, src: str):
 
     campaign = Campaign(
         campaign_id,
+        site_type,
         url,
         title,
         tags,
