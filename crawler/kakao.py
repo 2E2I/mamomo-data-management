@@ -8,8 +8,9 @@ from campaign import *
 
 
 _URL_DONATE_LIST = "https://together.kakao.com/fundraisings/now?sort=1"
-_SITE_NAME = "kakao"
-_CAMPAIGNS = "campaigns"
+_DONATE_SITE = "kakao"
+_ES_INDEX = "campaigns"
+_ES_TYPE = "card"
 
 
 def set_chrome_driver():
@@ -89,8 +90,8 @@ def get_percent():
 
 def set_campaign_data_with_index(campaign):
     index = dict()
-    index["_index"] = _CAMPAIGNS
-    index["_type"] = _SITE_NAME
+    index["_index"] = _ES_INDEX
+    index["_type"] = _ES_TYPE
     index["_id"] = campaign.campaign_id
     index["_source"] = campaign.__dict__     # 딕셔너리 형태로 저장
     return index
@@ -98,6 +99,7 @@ def set_campaign_data_with_index(campaign):
 
 def crawling_each_campaign():
     campaign_id = get_campaign_id()
+    site_type = _DONATE_SITE
     url = get_url()
     title = get_title()
     tags = get_tags()
@@ -108,11 +110,9 @@ def crawling_each_campaign():
     status_price, target_price = get_prices()
     percent = get_percent()
 
-    print(url)
-    print(title)
-
     campaign = Campaign(
         campaign_id,
+        site_type,
         url,
         title,
         tags,
@@ -129,7 +129,7 @@ def crawling_each_campaign():
 
     data.append(campaign_data)
 
-    # print(data)
+
 
 if __name__ == '__main__':
 
@@ -161,7 +161,7 @@ if __name__ == '__main__':
     # 각 캠페인 페이지에 대한 크롤링 진행
     for page_url in page_url_list:
         driver.get(page_url)
-        driver.implicitly_wait(time_to_wait=1)
+        driver.implicitly_wait(time_to_wait=1.3)
         crawling_each_campaign()
 
     driver.close()
