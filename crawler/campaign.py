@@ -6,8 +6,7 @@ class Campaign:
             campaign_id,
             url,
             title,
-            category,
-            theme,
+            tags,
             body,
             organization_name,
             thumbnail,
@@ -20,8 +19,7 @@ class Campaign:
         self.campaign_id = campaign_id
         self.url = url
         self.title = title
-        self.category = category
-        self.theme = theme
+        self.tags = tags
         self.body = body
         self.organization_name = organization_name
         self.thumbnail = thumbnail

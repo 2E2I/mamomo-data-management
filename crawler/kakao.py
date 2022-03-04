@@ -49,11 +49,7 @@ def get_title():
     return driver.find_element(By.CLASS_NAME, "tit_visual").text
 
 
-def get_category():
-    return ""
-
-
-def get_theme():
+def get_tags():
     # 태그
     tags = []
     for tag in driver.find_elements(By.TAG_NAME, "tag-card > a"):
@@ -104,8 +100,7 @@ def crawling_each_campaign():
     campaign_id = get_campaign_id()
     url = get_url()
     title = get_title()
-    category = get_category()
-    theme = get_theme()
+    tags = get_tags()
     body = get_body()
     organization_name = get_organization_name()
     thumbnail = get_thumbnail()
@@ -120,8 +115,7 @@ def crawling_each_campaign():
         campaign_id,
         url,
         title,
-        category,
-        theme,
+        tags,
         body,
         organization_name,
         thumbnail,
