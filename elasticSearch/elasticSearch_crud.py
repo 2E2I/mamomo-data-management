@@ -9,6 +9,7 @@ def insertData():
         with open(f'data\{site}.json', 'r', encoding='utf-8') as f:
             data = json.loads(f.read())
         res = helpers.bulk(es, data)
+        print(f"{site} insert : {res}")
 
 
 if __name__ == '__main__':
