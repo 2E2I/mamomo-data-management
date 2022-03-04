@@ -14,16 +14,38 @@ import json
 from campaign import *
 
 _URL_DONATE_LIST = "https://happybean.naver.com/donation/DonateHomeMain"
+_SITE_NAME = "happybean"
+_CAMPAIGNS = "campaigns"
+
+def set_chrome_driver():
+    options = webdriver.ChromeOptions()
+    options.add_argument("headless")  # 웹 브라우저를 띄우지 않는 headless chrome 옵션
+    options.add_argument("lang=ko_KR")  # 언어 설정
+    options.add_experimental_option(
+        "excludeSwitches", ["enable-logging"]
+    )  # 개발도구 로그 숨기기
+    options.add_argument("start-maximized")
+    options.add_argument("disable-infobars")
+    options.add_argument("--disable-extensions")
+    driver = webdriver.Chrome(
+        service=Service(ChromeDriverManager().install()), options=options
+    )
+    return driver
 
 def get_title(soup: BeautifulSoup):
     return soup.find("h3", "tit").text
 
 
-def get_theme_and_category(soup: BeautifulSoup):
+def get_tags(soup: BeautifulSoup):
+    tags = []
     _theme = soup.find("a", "theme").text.split(">")
-    theme = _theme[1].strip()
+    tags.append(_theme[1].strip())
     category = _theme[0].strip()
-    return theme, category
+    if "•" in category:
+        tags.extend(category.split("•"))
+    else:
+        tags.append(category)
+    return tags
 
 
 def get_body(soup: BeautifulSoup):
@@ -60,12 +82,20 @@ def get_prices(soup: BeautifulSoup):
 def get_percent(soup: BeautifulSoup):
     return soup.select_one("#container > div > div.collect_side > div.section_status > div.graph_wrap > div.graph_status > span > strong").text
 
+def set_campaign_data_with_index(campaign):
+    index = dict()
+    index["_index"] = _CAMPAIGNS
+    index["_type"] = _SITE_NAME
+    index["_id"] = campaign.campaign_id
+    index["_source"] = campaign.__dict__     # 딕셔너리 형태로 저장
+    return index
+
 def crawling_each_campaign(url: str, src: str):
     response = requests.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
     campaign_id = url.split("/")[4]
     title = get_title(soup)
-    theme, category = get_theme_and_category(soup)
+    tags = get_tags(soup)
     body = get_body(soup)
     organization_name = get_organization_name(soup)
     thumbnail = src
@@ -77,8 +107,7 @@ def crawling_each_campaign(url: str, src: str):
         campaign_id,
         url,
         title,
-        category,
-        theme,
+        tags,
         body,
         organization_name,
         thumbnail,
@@ -88,24 +117,10 @@ def crawling_each_campaign(url: str, src: str):
         status_price,
         percent
     )
-    data.append(campaign.__dict__)
+    
+    campaign_data = set_campaign_data_with_index(campaign)
 
-
-def set_chrome_driver():
-    options = webdriver.ChromeOptions()
-    options.add_argument("headless")  # 웹 브라우저를 띄우지 않는 headless chrome 옵션
-    options.add_argument("lang=ko_KR")  # 언어 설정
-    options.add_experimental_option(
-        "excludeSwitches", ["enable-logging"]
-    )  # 개발도구 로그 숨기기
-    options.add_argument("start-maximized")
-    options.add_argument("disable-infobars")
-    options.add_argument("--disable-extensions")
-    driver = webdriver.Chrome(
-        service=Service(ChromeDriverManager().install()), options=options
-    )
-    return driver
-
+    data.append(campaign_data)
 
 if __name__ == "__main__":
 
