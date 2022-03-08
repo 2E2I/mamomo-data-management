@@ -10,7 +10,7 @@ from campaign import *
 _URL_DONATE_LIST = "https://together.kakao.com/fundraisings/now?sort=1"
 _DONATE_SITE = "kakao"
 _ES_INDEX = "campaigns"
-_ES_TYPE = "card"
+_ES_TYPE = "_doc"
 
 
 def set_chrome_driver():
@@ -73,14 +73,14 @@ def get_thumbnail():
 
 def get_dates():
     txt_date = driver.find_element(By.CLASS_NAME, "txt_date").text.split(" ~ ")
-    start_date = txt_date[0]
-    due_date = txt_date[1]
+    start_date = txt_date[0].strip().replace('.', '-')
+    due_date = txt_date[1].strip().replace('.', '-')
     return start_date, due_date
 
 
 def get_prices():
-    status_price = driver.find_element(By.CLASS_NAME, "txt_goal").text.split("원")[0]
-    target_price = driver.find_element(By.CLASS_NAME, "total_fund").text.split("원")[0]
+    status_price = driver.find_element(By.CLASS_NAME, "txt_goal").text.split("원")[0].strip().replace(',','')
+    target_price = driver.find_element(By.CLASS_NAME, "total_fund").text.split("원")[0].strip().replace(',','')
     return status_price, target_price
 
 
