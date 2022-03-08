@@ -10,13 +10,14 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 import time
+from datetime import datetime
 import json
 from campaign import *
 
 _URL_DONATE_LIST = "https://happybean.naver.com/donation/DonateHomeMain"
 _DONATE_SITE = "happybean"
 _ES_INDEX = "campaigns"
-_ES_TYPE = "card"
+_ES_TYPE = "_doc"
 
 def set_chrome_driver():
     options = webdriver.ChromeOptions()
@@ -66,8 +67,10 @@ def get_dates(soup: BeautifulSoup):
     _term = soup.select_one(
         "#container > div > div.collect_side > div.section_status > div.term_area > p > strong"
     ).text.split("~")
-    start_date = _term[0].strip()
-    due_date = _term[1].strip()
+    
+    start_date = _term[0].strip().replace('.', '-')
+    due_date = _term[1].strip().replace('.', '-')
+
     return start_date, due_date
 
 
