@@ -7,6 +7,7 @@ class Campaign:
             site_type,
             url,
             title,
+            category,
             tags,
             body,
             organization_name,
