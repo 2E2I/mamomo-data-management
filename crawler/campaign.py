@@ -1,5 +1,3 @@
-from abc import *
-
 class Campaign:
     def __init__(
             self,

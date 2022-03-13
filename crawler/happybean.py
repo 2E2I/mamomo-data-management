@@ -48,7 +48,7 @@ def get_category(soup: BeautifulSoup):
     elif theme == "시민사회":
         category.append("우리사회")
     else:
-        category.append(theme)
+        category.append(theme.replace("•","|"))
     return category
 
 
