@@ -68,9 +68,9 @@ def get_title():
 
 
 def get_category(tags):
-    before_tags = ["어린이", "실버세대", "장애인", "어려운이웃", "이주민|다문화", "지구촌", "여성",
+    before_tags = ["아동|청소년", "실버세대", "장애인", "어려운이웃", "이주민|다문화", "지구촌", "여성",
                    "우리사회", "동물", "환경"]
-    after_tags = ["아동•청소년", "어르신", "장애인", "어려운이웃", "다문화", "지구촌", "가족•여성",
+    after_tags = ["아동|청소년", "어르신", "장애인", "어려운이웃", "다문화", "지구촌", "가족|여성",
                   "우리사회", "동물", "환경"]
     category = []
 
@@ -89,7 +89,7 @@ def get_tags():
 
 
 def get_body():
-    body_tag = WebDriverWait(driver,timeout=5).until(EC.presence_of_element_located((By.TAG_NAME, "fundraising-content")))
+    body_tag = WebDriverWait(driver,timeout=6).until(EC.presence_of_element_located((By.TAG_NAME, "fundraising-content")))
     return body_tag.text.replace('\n', ' ')
 
 
@@ -135,7 +135,6 @@ def crawling_each_campaign():
     title = get_title()
     tags = get_tags()
     category = get_category(tags)
-    print(category)
     body = get_body()
     organization_name = get_organization_name()
     thumbnail = get_thumbnail()
