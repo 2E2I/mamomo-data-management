@@ -22,6 +22,7 @@ class Campaign:
         self.site_type = site_type
         self.url = url
         self.title = title
+        self.category = category
         self.tags = tags
         self.body = body
         self.organization_name = organization_name
