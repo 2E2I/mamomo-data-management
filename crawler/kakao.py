@@ -89,7 +89,7 @@ def get_tags():
 
 
 def get_body():
-    body_tag = WebDriverWait(driver,timeout=6).until(EC.presence_of_element_located((By.TAG_NAME, "fundraising-content")))
+    body_tag = WebDriverWait(driver,timeout=7).until(EC.presence_of_element_located((By.TAG_NAME, "fundraising-content")))
     return body_tag.text.replace('\n', ' ')
 
 
@@ -110,8 +110,8 @@ def get_dates():
 
 
 def get_prices():
-    status_price = driver.find_element(By.CLASS_NAME, "txt_goal").text.split("원")[0].strip().replace(',', '')
-    target_price = driver.find_element(By.CLASS_NAME, "total_fund").text.split("원")[0].strip().replace(',', '')
+    status_price = driver.find_element(By.CLASS_NAME, "total_fund").text.split("원")[0].strip().replace(',', '')
+    target_price = driver.find_element(By.CLASS_NAME, "txt_goal").text.split("원")[0].strip().replace(',', '')
     return status_price, target_price
 
 
