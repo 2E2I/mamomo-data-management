@@ -89,7 +89,7 @@ def get_tags():
 
 
 def get_body():
-    body_tag = WebDriverWait(driver,timeout=7).until(EC.presence_of_element_located((By.TAG_NAME, "fundraising-content")))
+    body_tag = WebDriverWait(driver,timeout=10).until(EC.presence_of_element_located((By.TAG_NAME, "fundraising-content")))
     return body_tag.text.replace('\n', ' ')
 
 
