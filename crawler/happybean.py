@@ -98,7 +98,6 @@ def crawling_each_campaign(url: str, src: str):
     site_type = _DONATE_SITE
     title = get_title(soup)
     category = get_category(soup)
-    print(category)
     tags = get_tags(soup)
     body = get_body(soup)
     organization_name = get_organization_name(soup)
