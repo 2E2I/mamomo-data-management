@@ -1,39 +1,18 @@
-from lib2to3.pgen2 import driver
-from selenium import webdriver
 import requests
 from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 import time
-from datetime import datetime
 import json
 from campaign import *
+import chromeDriver
 
 _URL_DONATE_LIST = "https://happybean.naver.com/donation/DonateHomeMain"
 _DONATE_SITE = "happybean"
 _ES_INDEX = "campaigns"
 _ES_TYPE = "_doc"
-
-
-def set_chrome_driver():
-    options = webdriver.ChromeOptions()
-    options.add_argument("headless")  # 웹 브라우저를 띄우지 않는 headless chrome 옵션
-    options.add_argument("lang=ko_KR")  # 언어 설정
-    options.add_experimental_option(
-            "excludeSwitches", ["enable-logging"]
-    )  # 개발도구 로그 숨기기
-    options.add_argument("start-maximized")
-    options.add_argument("disable-infobars")
-    options.add_argument("--disable-extensions")
-    driver = webdriver.Chrome(
-            service=Service(ChromeDriverManager().install()), options=options
-    )
-    return driver
 
 
 def get_title(soup: BeautifulSoup):
@@ -48,7 +27,7 @@ def get_category(soup: BeautifulSoup):
     elif theme == "시민사회":
         category.append("우리사회")
     else:
-        category.append(theme.replace("•","|"))
+        category.append(theme.replace("•", "|"))
     return category
 
 
@@ -157,7 +136,7 @@ if __name__ == "__main__":
 
     data = []
 
-    driver = set_chrome_driver()
+    driver = chromeDriver.set_chrome_driver()
     driver.get(_URL_DONATE_LIST)
 
     # 더보기 버튼 끝까지 클릭
