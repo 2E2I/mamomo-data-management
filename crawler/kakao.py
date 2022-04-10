@@ -1,58 +1,15 @@
-from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 import json
 from campaign import *
+import chromeDriver
 
 _URL_DONATE_LIST = "https://together.kakao.com/fundraisings/now?sort=1"
 _DONATE_SITE = "kakao"
 _ES_INDEX = "campaigns"
 _ES_TYPE = "_doc"
-
-
-def set_chrome_driver():
-    options = webdriver.ChromeOptions()
-    options.add_argument('headless')  # 웹 브라우저를 띄우지 않는 headless chrome 옵션
-    options.add_argument('lang=ko_KR')  # 언어 설정
-    options.add_experimental_option("excludeSwitches",
-                                    ["enable-logging"])  # 개발도구 로그 숨기기
-    options.add_argument("window-size=1920,1080")  # window size 수동 조정
-    options.add_argument("disable-gpu")
-    options.add_argument("disable-infobars")
-    options.add_argument("--disable-extensions")
-
-    # 속도 향상을 위한 옵션 해제
-    prefs = {
-        'profile.default_content_setting_values': {'cookies': 2, 'images': 2,
-                                                   'plugins': 2, 'popups': 2,
-                                                   'geolocation': 2,
-                                                   'notifications': 2,
-                                                   'auto_select_certificate': 2,
-                                                   'fullscreen': 2,
-                                                   'mouselock': 2,
-                                                   'mixed_script': 2,
-                                                   'media_stream': 2,
-                                                   'media_stream_mic': 2,
-                                                   'media_stream_camera': 2,
-                                                   'protocol_handlers': 2,
-                                                   'ppapi_broker': 2,
-                                                   'automatic_downloads': 2,
-                                                   'midi_sysex': 2,
-                                                   'push_messaging': 2,
-                                                   'ssl_cert_decisions': 2,
-                                                   'metro_switch_to_desktop': 2,
-                                                   'protected_media_identifier': 2,
-                                                   'app_banner': 2,
-                                                   'site_engagement': 2,
-                                                   'durable_storage': 2}}
-    options.add_experimental_option('prefs', prefs)
-
-    return webdriver.Chrome(service=Service(ChromeDriverManager().install()),
-                            options=options)
 
 
 def get_campaign_id():
@@ -89,17 +46,24 @@ def get_tags():
 
 
 def get_body():
-    body_tag = WebDriverWait(driver,timeout=10).until(EC.presence_of_element_located((By.TAG_NAME, "fundraising-content")))
+    try:
+        body_tag = WebDriverWait(driver, 12).until(
+        EC.presence_of_element_located((By.TAG_NAME, "fundraising-content")))
+    except:
+        print("body 크롤링 실패")
+        driver.quit()
     return body_tag.text.replace('\n', ' ')
 
 
-
 def get_organization_name():
-    return driver.find_element(By.CLASS_NAME, "txt_sponsor").text.split("by ")[1]
+    return driver.find_element(By.CLASS_NAME, "txt_sponsor").text.split("by ")[
+        1]
 
 
 def get_thumbnail():
-    return driver.find_element(By.CLASS_NAME, 'cont_visual').value_of_css_property('background-image').split("\"")[1]
+    return \
+    driver.find_element(By.CLASS_NAME, 'cont_visual').value_of_css_property(
+        'background-image').split("\"")[1]
 
 
 def get_dates():
@@ -110,8 +74,12 @@ def get_dates():
 
 
 def get_prices():
-    status_price = driver.find_element(By.CLASS_NAME, "total_fund").text.split("원")[0].strip().replace(',', '')
-    target_price = driver.find_element(By.CLASS_NAME, "txt_goal").text.split("원")[0].strip().replace(',', '')
+    status_price = \
+    driver.find_element(By.CLASS_NAME, "total_fund").text.split("원")[
+        0].strip().replace(',', '')
+    target_price = \
+    driver.find_element(By.CLASS_NAME, "txt_goal").text.split("원")[
+        0].strip().replace(',', '')
     return status_price, target_price
 
 
@@ -171,7 +139,7 @@ if __name__ == '__main__':
     data = []
     page_url_list = []
 
-    driver = set_chrome_driver()
+    driver = chromeDriver.set_chrome_driver()
     driver.get(_URL_DONATE_LIST)
 
     # 페이지 끝까지 스크롤
