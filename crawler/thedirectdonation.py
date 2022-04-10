@@ -54,37 +54,37 @@ def get_body():
 def get_organization_name():
     return driver.find_element(By.XPATH,
                                "/html/body/section[1]/div/div[1]/div/span[1]").text.replace(
-        "# ", "")
+            "# ", "")
 
 
 def get_thumbnail():
     return driver.find_element(By.CLASS_NAME,
                                'donate_view_thumb').value_of_css_property(
-        'background-image').split("\"")[1]
+            'background-image').split("\"")[1]
 
 
 def get_dates():
     start_date = driver.find_element(By.XPATH,
                                      "/html/body/section[1]/div/div[2]/div[2]/div/div/p").text.split(
-        ":")[1].replace(".", "-").replace(" ", "")
-    due_date = "2022-04-10"
+            ":")[1].replace(".", "-").replace(" ", "")
+    due_date = "2099-01-01"
     return start_date, due_date
 
 
 def get_prices():
     status_price = driver.find_element(By.XPATH,
                                        "/html/body/section[1]/div/div[2]/div[2]/div/div/h4/b").text.replace(
-        ',', '')
+            ',', '')
     target_price = driver.find_element(By.XPATH,
                                        "/html/body/section[1]/div/div[2]/div[2]/div/div/div[3]/dl[1]/dd/b").text.replace(
-        ',', '')
+            ',', '')
     return status_price, target_price
 
 
 def get_percent():
     return driver.find_element(By.XPATH,
-                               "/html/body/section[1]/div/div[2]/div[2]/div/div/div[1]/h2").text.replace(
-        '%', '')
+                               "/html/body/section[1]/div/div[2]/div[2]/div/div/div[1]/h2").text.split(
+        ".")[0]
 
 
 def set_campaign_data_with_index(campaign):
