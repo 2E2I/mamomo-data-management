@@ -2,7 +2,7 @@ from operator import index
 from elasticsearch import helpers, Elasticsearch
 import json
 
-sites = ['happybean', 'kakao','thedirectdonation']
+sites = ['happybean', 'kakao','thedirectdonation', 'cherry']
 
 def createIndex():
     if not es.indices.exists(index = "campaigns"):
