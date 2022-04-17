@@ -1,22 +1,11 @@
 from lib2to3.pgen2 import driver
-from turtle import onclick
-from selenium import webdriver
-import requests
-import re
-from bs4 import BeautifulSoup
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import TimeoutException
-from selenium.common.exceptions import NoSuchElementException
-from selenium.common.exceptions import StaleElementReferenceException
 import time
-from datetime import datetime
 import json
 from campaign import *
+import chromeDriver
 
 _URL_DONATE_LIST = "https://cherry.charity/public/campaigns/fullList?fullListCode=userTag&homeQuery=Y&cherryChoice=tag"
 _DONATE_SITE = "cherry"
@@ -24,40 +13,31 @@ _ES_INDEX = "campaigns"
 _ES_TYPE = "_doc"
 
 
-def set_chrome_driver():
-    options = webdriver.ChromeOptions()
-    options.add_argument("headless")  # 웹 브라우저를 띄우지 않는 headless chrome 옵션
-    options.add_argument("lang=ko_KR")  # 언어 설정
-    options.add_experimental_option(
-            "excludeSwitches", ["enable-logging"]
-    )  # 개발도구 로그 숨기기
-    options.add_argument("start-maximized")
-    options.add_argument("disable-infobars")
-    options.add_argument("--disable-extensions")
-    driver = webdriver.Chrome(
-            service=Service(ChromeDriverManager().install()), options=options
-    )
-    return driver
-
 def get_url():
     return driver.current_url
+
 
 def get_title():
     title = ""
     try:
-        title = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CSS_SELECTOR, '#wrap > div > div > div > div.prflArea > p.tit'))).text
+        title = WebDriverWait(driver, 20).until(EC.presence_of_element_located((
+                                                                               By.CSS_SELECTOR,
+                                                                               '#wrap > div > div > div > div.prflArea > p.tit'))).text
     except:
         driver.quit()
         title = "no_title"
     return title
 
+
 def get_category():
     return ""
+
 
 def get_tags():
     tags = []
     try:
-        tag_elements = WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'sl_tag')))
+        tag_elements = WebDriverWait(driver, 10).until(
+            EC.presence_of_all_elements_located((By.CLASS_NAME, 'sl_tag')))
         tags = [tag.text.replace("#", '') for tag in tag_elements]
     except:
         print("태그 찾지 못함")
@@ -72,12 +52,15 @@ def get_body():
 def get_organization_name():
     return driver.find_element(By.CLASS_NAME, 'name').text
 
+
 def get_thumbnail():
-    return driver.find_element(By.CLASS_NAME, 'campaignVisual').get_attribute('data-imgurl')
+    return driver.find_element(By.CLASS_NAME, 'campaignVisual').get_attribute(
+        'data-imgurl')
 
 
 def get_dates():
-    _term = driver.find_element(By.CLASS_NAME, 'sl_cmpgndtlTerm').text.replace('모금기간 ', '').split(' ~ ')
+    _term = driver.find_element(By.CLASS_NAME, 'sl_cmpgndtlTerm').text.replace(
+        '모금기간 ', '').split(' ~ ')
     start_date = _term[0].strip().replace('.', '-')
     due_date = _term[1].strip().replace('.', '-')
 
@@ -85,8 +68,10 @@ def get_dates():
 
 
 def get_prices():
-    status_price = driver.find_element(By.CLASS_NAME, 'sl_counter').text.replace(",", "")
-    target_price = driver.find_element(By.CLASS_NAME, 'sl_total').text.replace('원', '').replace(",", "")
+    status_price = driver.find_element(By.CLASS_NAME,
+                                       'sl_counter').text.replace(",", "")
+    target_price = driver.find_element(By.CLASS_NAME, 'sl_total').text.replace(
+        '원', '').replace(",", "")
     return status_price, target_price
 
 
@@ -116,12 +101,12 @@ def crawling_each_campaign():
     thumbnail = get_thumbnail()
     start_date, due_date = get_dates()
     status_price, target_price = get_prices()
-    
+
     if int(status_price) is not 0:
         percent = int(target_price) // int(status_price)
     else:
         percent = 0
-    
+
     campaign = Campaign(
             campaign_id,
             site_type,
@@ -143,6 +128,7 @@ def crawling_each_campaign():
 
     data.append(campaign_data)
 
+
 def scroll_to_end_of_page():
     SCROLL_PAUSE_SEC = 1
 
@@ -162,6 +148,7 @@ def scroll_to_end_of_page():
             break
         last_height = new_height
 
+
 if __name__ == "__main__":
 
     print("... 체리 크롤링 시작 ...")
@@ -170,28 +157,29 @@ if __name__ == "__main__":
     data = []
     page_url_list = []
 
-    driver = set_chrome_driver()
+    driver = chromeDriver.set_chrome_driver()
     driver.get(_URL_DONATE_LIST)
     driver.implicitly_wait(time_to_wait=1)
-    
+
     scroll_to_end_of_page()
 
     # card list 구하기
     cards_container = driver.find_element(By.CLASS_NAME, 'campaignList')
     cards = cards_container.find_elements(By.TAG_NAME, 'li')
-    
+
     # 캠페인 세부페이지 url list
     for card in cards:
         onclick_tag = card.get_attribute('onclick')
-        campaign_id = onclick_tag.replace('cmmCmpgn.goCmpgnPag(', '').replace(')', '')
+        campaign_id = onclick_tag.replace('cmmCmpgn.goCmpgnPag(', '').replace(
+            ')', '')
         campaign_url = "https://cherry.charity/public/campaign/cmpgnDtlPage/" + campaign_id
         page_url_list.append(campaign_url)
-    
+
     for url in page_url_list:
         driver.get(url)
         driver.implicitly_wait(time_to_wait=1.3)
         crawling_each_campaign()
-            
+
     driver.close()
 
     end = time.time()  # 종료 시간
