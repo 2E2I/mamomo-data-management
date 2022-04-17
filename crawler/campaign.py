@@ -30,4 +30,4 @@ class Campaign:
         self.target_price = target_price
         self.status_price = status_price
         self.percent = percent
-        self.heartCount = 0
+        self.heart_count = "0"

@@ -84,7 +84,7 @@ def get_prices():
 def get_percent():
     return driver.find_element(By.XPATH,
                                "/html/body/section[1]/div/div[2]/div[2]/div/div/div[1]/h2").text.split(
-        ".")[0]
+        ".")[0].replace("%","")
 
 
 def set_campaign_data_with_index(campaign):
@@ -109,6 +109,7 @@ def crawling_each_campaign():
     start_date, due_date = get_dates()
     status_price, target_price = get_prices()
     percent = get_percent()
+    heart_count = "0"
 
     campaign = Campaign(
             campaign_id,
@@ -124,7 +125,8 @@ def crawling_each_campaign():
             start_date,
             target_price,
             status_price,
-            percent)
+            percent,
+            heart_count)
 
     campaign_data = set_campaign_data_with_index(campaign)
 
