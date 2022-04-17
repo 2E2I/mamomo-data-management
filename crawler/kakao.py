@@ -48,7 +48,7 @@ def get_tags():
 def get_body():
     try:
         body_tag = WebDriverWait(driver, 12).until(
-        EC.presence_of_element_located((By.TAG_NAME, "fundraising-content")))
+        EC.presence_of_element_located((By.CLASS_NAME, "cont_subject")))
     except:
         print("body 크롤링 실패")
         driver.quit()
