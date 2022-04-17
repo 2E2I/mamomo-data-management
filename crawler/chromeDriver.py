@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
+
 def set_chrome_driver():
     options = webdriver.ChromeOptions()
     options.add_argument('headless')  # 웹 브라우저를 띄우지 않는 headless chrome 옵션
