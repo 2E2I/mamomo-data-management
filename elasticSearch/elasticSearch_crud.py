@@ -39,7 +39,6 @@ def initData():
 
 
 if __name__ == '__main__':
-    # es = Elasticsearch('http://elastic:hansung@localhost:9200/', timeout=30,max_retries=10, retry_on_timeout=True)
-    es = Elasticsearch('http://elastic:hansung@34.64.234.137:9200/', timeout=30,
-                       max_retries=10, retry_on_timeout=True)
+    es = Elasticsearch('http://elastic:hansung@localhost:9200/', timeout=30,max_retries=10, retry_on_timeout=True)
+
     initData()

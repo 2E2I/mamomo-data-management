@@ -109,7 +109,6 @@ def crawling_each_campaign():
     start_date, due_date = get_dates()
     status_price, target_price = get_prices()
     percent = get_percent()
-    heart_count = "0"
 
     campaign = Campaign(
             campaign_id,
@@ -125,8 +124,7 @@ def crawling_each_campaign():
             start_date,
             target_price,
             status_price,
-            percent,
-            heart_count)
+            percent)
 
     campaign_data = set_campaign_data_with_index(campaign)
 
