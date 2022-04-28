@@ -84,7 +84,7 @@ def get_prices():
 def get_percent():
     return driver.find_element(By.XPATH,
                                "/html/body/section[1]/div/div[2]/div[2]/div/div/div[1]/h2").text.split(
-        ".")[0]
+        ".")[0].replace("%","")
 
 
 def set_campaign_data_with_index(campaign):
