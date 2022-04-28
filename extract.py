@@ -6,16 +6,32 @@ from konlpy.tag import Okt
 import re
 import pprint
 
+def get_stopwords():
+    stopwords = list()
+    
+    f = open('./stopwords.txt', 'r', encoding='utf-8')
+    
+    while True:
+        line = f.readline()
+        if not line: break
+        stopwords.append(line.strip())
+        
+    return stopwords
+
 def okt_tokenizer(text):
     okt = Okt()
+    
     text = re.sub(r'[^ ㄱ-ㅣ가-힣A-Za-z]', '', text) # 특수기호 제거
-    return okt.morphs(text, norm=True, stem=True)
+    stopwords = get_stopwords() # 불용어
+    
+    return [token for token in okt.morphs(text, norm=True, stem=True)
+            if len(token) > 1 and token not in stopwords]
 
 def extract_keywords(text):
          
     vectorizer = TfidfVectorizer(tokenizer=okt_tokenizer)
     vectorizer.fit(text)
-    matrix = vectorizer.transform(text)
+    matrix = vectorizer.fit_transform(text)
     
     # 단어 사전: {"token": id}
     vocabulary_word_id = defaultdict(int)
