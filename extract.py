@@ -2,7 +2,7 @@
 from sklearn.feature_extraction.text import TfidfVectorizer
 from collections import defaultdict
 import numpy as np
-from konlpy.tag import Twitter
+from konlpy.tag import Okt
 import re
 import pprint
 
@@ -19,12 +19,12 @@ def get_stopwords():
     return stopwords
 
 def okt_tokenizer(text):
-    twitter = Twitter()
+    okt = Okt()
     
     text = re.sub(r'[^ ㄱ-ㅣ가-힣A-Za-z]', '', text) # 특수기호 제거
     stopwords = get_stopwords() # 불용어
     
-    return [token for token in twitter.nouns(text)
+    return [token for token in okt.nouns(text)
             if len(token) > 1 and token not in stopwords]
 
 def extract_keywords(text):
@@ -49,4 +49,4 @@ def extract_keywords(text):
     result = sorted(result.items(), key = lambda item: item[1], reverse = True)
     pprint.pprint(result)
     
-    return [token for token, value in result]
+    return [{"keyword": token, "value": value} for token, value in result if value is not 0]

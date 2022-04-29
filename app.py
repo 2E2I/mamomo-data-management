@@ -3,7 +3,7 @@ import extract
 
 app = Flask(__name__)
 
-@app.route("/", methods=['POST'])
+@app.route("/textMining", methods=['POST'])
 def extract_keywords():
     # 요청이 json형식인지 검사
     if not request.is_json:
