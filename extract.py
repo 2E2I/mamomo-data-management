@@ -49,4 +49,4 @@ def extract_keywords(text):
     result = sorted(result.items(), key = lambda item: item[1], reverse = True)
     pprint.pprint(result)
     
-    return [{"keyword": token, "value": round(value * 10, 1)} for token, value in result if value is not 0]
+    return [{"keyword": token, "value": round(value * 10, 1)} for token, value in result if not value < 0.1]
