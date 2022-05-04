@@ -5,12 +5,15 @@ import numpy as np
 from konlpy.tag import Okt
 import re
 import pprint
+import os
 
 def get_stopwords():
     stopwords = list()
-    
-    f = open('./stopwords.txt', 'r', encoding='utf-8')
-    
+    path = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(path,"stopwords.txt")
+
+    f = open(file_path, 'r', encoding='utf-8')
+
     while True:
         line = f.readline()
         if not line: break
