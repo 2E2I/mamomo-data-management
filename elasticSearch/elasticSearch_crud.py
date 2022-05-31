@@ -30,8 +30,10 @@ def createIndex():
 
 
 def initData():
-    createIndex()
-    
+    createIndex() 
+
+    es.delete_by_query(index="campaigns",body='{"query": {"match_all": {}}}')
+
     path = os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir)))
     
     for site in sites:
