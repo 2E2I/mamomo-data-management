@@ -1,5 +1,6 @@
 from elasticsearch import helpers, Elasticsearch
 import json
+import os
 
 sites = ['happybean', 'kakao', 'thedirectdonation', 'cherry']
 
@@ -30,9 +31,12 @@ def createIndex():
 
 def initData():
     createIndex()
-
+    
+    path = os.path.dirname(os.path.abspath(os.path.join(__file__, os.pardir)))
+    
     for site in sites:
-        with open(f'data/{site}.json', 'r', encoding='utf-8') as f:
+        file_path = os.path.join(path,f"data/{site}.json")
+        with open(file_path, 'r', encoding='utf-8') as f:
             data = json.loads(f.read())
         res = helpers.bulk(es, data)
         print(f"{site} insert : {res}")
