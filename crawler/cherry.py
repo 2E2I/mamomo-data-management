@@ -39,6 +39,7 @@ def get_tags():
         tag_elements = WebDriverWait(driver, 10).until(
             EC.presence_of_all_elements_located((By.CLASS_NAME, 'sl_tag')))
         tags = [tag.text.replace("#", '') for tag in tag_elements]
+        tags = list(set(tags))
     except:
         print("태그 찾지 못함")
         driver.quit()
